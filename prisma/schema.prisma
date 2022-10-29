@@ -11,6 +11,7 @@ model User {
     id    String @unique @default(uuid())
     email String @unique
     hashedPassword String
+    nickname String? @unique
     createdAt DateTime @default(now())
     updateAt DateTime @updatedAt()
 }

@@ -4,14 +4,15 @@ import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { PrismaService } from 'prisma/prisma.service';
 import { jwtSecret } from '../utils/constants';
-import { AuthDto } from './dto/auth.dto';
+import { signin } from './dto/signin.dto';
+import { signup } from './dto/signup.dto';
 
 @Injectable()
 export class AuthService {
     constructor(private prisma: PrismaService, private jwt: JwtService) { }
 
-    async signup(dto: AuthDto) {
-        const { email, password } = dto;
+    async signup(dto: signup) {
+        const { email, password, nickname } = dto;
         const foundUser = await this.prisma.user.findUnique({ where: { email } })
         if (foundUser) {
             throw new BadRequestException('Email already exits')
@@ -22,14 +23,15 @@ export class AuthService {
         await this.prisma.user.create({
             data: {
                 email,
-                hashedPassword
+                hashedPassword,
+                nickname
             }
         })
 
         return { message: 'signup was successful' };
     }
 
-    async signin(dto: AuthDto, req: Request, res: Response) {
+    async signin(dto: signin, req: Request, res: Response) {
         const { email, password } = dto
 
         const foundUser = await this.prisma.user.findUnique({ where: { email } })
@@ -74,6 +76,6 @@ export class AuthService {
 
     async signToken(args: { id: string, email: string }) {
         const payload = args
-        return this.jwt.signAsync(payload, { secret: jwtSecret, expiresIn: '200s' })
+        return this.jwt.signAsync(payload, { secret: jwtSecret, expiresIn: '24h' })
     }
 }
