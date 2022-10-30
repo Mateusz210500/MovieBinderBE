@@ -10,9 +10,10 @@ export class FileService {
         return of(res.sendFile(join(process.cwd(), 'files/' + imagename)))
     }
 
-    async uploadImage(req: FileRequest): Promise<void> {
+    async uploadImage(req: FileRequest, res: any): Promise<void> {
         if (req.fileValidationError) {
             throw new BadRequestException(req.fileValidationError)
         }
+        return res.send({ fileName: req.file.filename })
     }
 }

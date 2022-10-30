@@ -7,7 +7,7 @@ import { FileService } from './file.service';
 
 @Controller('file')
 export class FileController {
-    constructor(private readonly imagesService: FileService) { }
+    constructor(private readonly fileService: FileService) { }
 
     @Post('upload')
     @UseInterceptors(FileInterceptor('file', {
@@ -20,12 +20,12 @@ export class FileController {
         },
         fileFilter: imageFileFilter
     }))
-    uploadFile(@Req() req) {
-        return this.imagesService.uploadImage(req)
+    uploadFile(@Req() req, @Res() res) {
+        return this.fileService.uploadImage(req, res)
     }
 
     @Get(':imagename')
     findProfileImage(@Param('imagename') imagename, @Res() res): Promise<Observable<void>> {
-        return this.imagesService.findImage(imagename, res)
+        return this.fileService.findImage(imagename, res)
     }
 }
