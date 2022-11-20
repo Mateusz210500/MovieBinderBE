@@ -19,3 +19,14 @@ model User {
     createdAt DateTime @default(now())
     updateAt DateTime @updatedAt()
 }
+
+model Catalog {
+    id  String @unique @default(uuid())
+    title String @unique
+    description String
+    authorId  String
+    filmIds String[]
+    file String?
+    createdAt DateTime @default(now())
+    updateAt DateTime @updatedAt()
+}

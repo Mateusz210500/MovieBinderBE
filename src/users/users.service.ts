@@ -9,8 +9,6 @@ export class UsersService {
 
     async getMyUsers(req: Request) {
         const decodedUser = req.user as { id: string, email: string, }
-
-
         const user = await this.prisma.user.findUnique({ where: { id: decodedUser.id } })
 
         if (!user) {
@@ -18,8 +16,6 @@ export class UsersService {
         }
 
         delete user.hashedPassword
-
-
         return { user }
     }
 
