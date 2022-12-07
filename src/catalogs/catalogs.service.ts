@@ -28,24 +28,27 @@ export class CatalogsService {
         return res.send({ message: 'Catalog created successfully' })
     }
 
-    // async getMyCatalogs(req: Request) {
-    //     const decodedUser = req.user as { id: string, email: string, }
-    //     const user = await this.prisma.user.findUnique({ where: { id: decodedUser.id } })
+    async getMyCatalogs(req: Request) {
+        const decodedUser = req.user as { id: string, email: string, }
+        const myCatalogs = await this.prisma.catalog.findMany({ where: { authorId: decodedUser.id } })
 
-    //     if (!user) {
-    //         throw new NotFoundException('User not found')
-    //     }
+        return { myCatalogs }
+    }
 
-    //     delete user.hashedPassword
-    //     return { user }
-    // }
+    async getCatalogById(id: string, res: Response) {
+        const foundCatalog = await this.prisma.catalog.findUnique({ where: { id: id } })
+        if (!foundCatalog) {
+            throw new BadRequestException("Catalog with that id doesn't exits")
+        }
+        return res.send({ foundCatalog })
+    }
 
     async addMovie(dto: addRemoveMovie, req: Request, res: Response) {
         const { movieId, catalogId } = dto
         const catalogData = await (await this.prisma.catalog.findFirst({ where: { id: catalogId } }))
         const decodedUser = req.user as { id: string, email: string, }
         if (decodedUser.id !== catalogData.authorId) {
-            throw new BadRequestException("You don't have parmission to do that")
+            throw new BadRequestException("You don't have permission to do that")
         }
         const filmIds = catalogData.filmIds
         const foundMovie = filmIds.find(el => el === movieId)

@@ -16,6 +16,7 @@ model User {
     about String?
     backgroundColor String?
     file String?
+    catalogs Catalog[]
     createdAt DateTime @default(now())
     updateAt DateTime @updatedAt()
 }
@@ -24,6 +25,7 @@ model Catalog {
     id  String @unique @default(uuid())
     title String @unique
     description String
+    author   User @relation(fields: [authorId], references: [id])
     authorId  String
     filmIds String[]
     file String?
